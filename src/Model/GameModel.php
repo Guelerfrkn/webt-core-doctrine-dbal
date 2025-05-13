@@ -1,10 +1,11 @@
 <?php
 // src/Model/GameModel.php
 
-namespace Furka\WebtCoreDoctrineDbal\Model; // Namespace gemäß deiner composer.json
+namespace Furka\WebtCoreDoctrineDbal\Model; // Stelle sicher, dass dieser Namespace mit deiner composer.json übereinstimmt
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Query\QueryBuilder;
+// QueryBuilder wird in diesem einfachen Model nicht explizit genutzt, aber ist gut zu wissen für komplexere Dinge
+// use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Exception;
 
 class GameModel
@@ -17,18 +18,15 @@ class GameModel
     }
 
     /**
-     * Holt alle Spielrunden aus der Datenbank, sortiert nach Datum absteigend.
+     * Holt alle Spielrunden aus der Datenbank.
      * @return array<int, array<string, mixed>>
      * @throws Exception
      */
     public function getAllGames(): array
     {
-        $qb = $this->db->createQueryBuilder();
-        $qb->select('id', 'player', 'symbol', 'game_date')
-           ->from('games')
-           ->orderBy('game_date', 'DESC');
-
-        return $qb->fetchAllAssociative();
+        $sql = "SELECT id, player1, symbol_player1, player2, symbol_player2, game_date FROM games ORDER BY game_date DESC";
+        $stmt = $this->db->executeQuery($sql);
+        return $stmt->fetchAllAssociative();
     }
 
     /**
@@ -39,58 +37,50 @@ class GameModel
      */
     public function getGameById(int $id): array|false
     {
-        $qb = $this->db->createQueryBuilder();
-        $qb->select('id', 'player', 'symbol', 'game_date')
-           ->from('games')
-           ->where('id = :id')
-           ->setParameter('id', $id);
-
-        return $qb->fetchAssociative();
+        $sql = "SELECT id, player1, symbol_player1, player2, symbol_player2, game_date FROM games WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue('id', $id);
+        $result = $stmt->executeQuery();
+        return $result->fetchAssociative();
     }
 
     /**
-     * Fügt eine neue Spielrunde hinzu.
-     * @param string $player
-     * @param string $symbol
-     * @param string|null $gameDate (Format YYYY-MM-DD HH:MM:SS oder null für jetzt)
-     * @return int Die Anzahl der eingefügten Zeilen (sollte 1 sein)
+     * Fügt eine neue Spielrunde für zwei Spieler hinzu.
+     * @param string $player1
+     * @param string $symbolPlayer1
+     * @param string $player2
+     * @param string $symbolPlayer2
+     * @param string|null $gameDate (Format YYYY-MM-DD HH:MM:SS oder null für aktuelle Zeit)
+     * @return int Anzahl der eingefügten Zeilen (sollte 1 sein)
      * @throws Exception
      */
-    public function addGame(string $player, string $symbol, ?string $gameDate = null): int
+    public function addGame(string $player1, string $symbolPlayer1, string $player2, string $symbolPlayer2, ?string $gameDate = null): int
     {
-        $qb = $this->db->createQueryBuilder();
+        // Wenn kein Datum übergeben wird, verwende den Datenbank-Standard (CURRENT_TIMESTAMP)
+        // oder setze es explizit auf die aktuelle Zeit der DB.
+        // Hier lassen wir es die DB handhaben, wenn null.
+        $data = [
+            'player1' => $player1,
+            'symbol_player1' => $symbolPlayer1,
+            'player2' => $player2,
+            'symbol_player2' => $symbolPlayer2,
+        ];
+        if ($gameDate !== null) {
+            $data['game_date'] = $gameDate;
+        }
 
-        // Wenn kein Datum übergeben wird, nimm das aktuelle Datum/Zeit der DB
-        $dateToInsert = $gameDate ?? $this->db->fetchOne('SELECT CURRENT_TIMESTAMP');
-
-        $qb->insert('games')
-           ->values([
-               'player' => ':player',
-               'symbol' => ':symbol',
-               'game_date' => ':game_date'
-           ])
-           ->setParameters([
-               'player' => $player,
-               'symbol' => $symbol,
-               'game_date' => $dateToInsert
-           ]);
-
-        return $qb->executeStatement();
+        // Doctrine DBAL's insert Methode ist hierfür gut geeignet
+        return $this->db->insert('games', $data);
     }
 
     /**
      * Löscht eine Spielrunde anhand der ID.
      * @param int $id
-     * @return int Die Anzahl der gelöschten Zeilen (sollte 1 sein)
+     * @return int Anzahl der gelöschten Zeilen (sollte 1 sein)
      * @throws Exception
      */
     public function deleteGame(int $id): int
     {
-        $qb = $this->db->createQueryBuilder();
-        $qb->delete('games')
-           ->where('id = :id')
-           ->setParameter('id', $id);
-
-        return $qb->executeStatement();
+        return $this->db->delete('games', ['id' => $id]);
     }
 }

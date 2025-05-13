@@ -2,7 +2,6 @@
 
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Configuration;
-use RpsStats\Controller\GameController;
 
 require __DIR__ . '/../vendor/autoload.php';
 
