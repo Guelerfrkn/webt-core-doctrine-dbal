@@ -1,0 +1,13 @@
+{
+    "name": "furka/webt-core-doctrine-dbal",
+    "description": "webt doctrine",
+    "type": "project",
+    "require": {
+        "doctrine/dbal": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Furka\\WebtCoreDoctrineDbal\\": "src/"
+        }
+    }
+}
