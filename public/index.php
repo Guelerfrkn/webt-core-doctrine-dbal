@@ -14,22 +14,12 @@ $connectionParams = [
     'charset'  => 'utf8mb4'
 ];
 
-$config = new Configuration();
-$dbConnection = null;
+$dbConnection = DriverManager::getConnection($connectionParams, new Configuration());
 
-try {
-    $dbConnection = DriverManager::getConnection($connectionParams, $config);
-} catch (\Doctrine\DBAL\Exception $e) {
-    die("Datenbankverbindung fehlgeschlagen: " . $e->getMessage());
-}
+$action = $_GET['action'] ?? 'list';
 
-// Einfaches Routing basierend auf einem 'action'-Parameter
-$action = $_GET['action'] ?? 'list'; // Standardaktion ist 'list'
-
-// Controller instanziieren
 $controller = new Furka\WebtCoreDoctrineDbal\Controller\GameController($dbConnection);
 
-// Gewünschte Methode im Controller aufrufen
 switch ($action) {
     case 'list':
         $controller->list();
@@ -38,18 +28,15 @@ switch ($action) {
         $controller->showAddForm();
         break;
     case 'add':
-        $controller->add(); // Verarbeitet POST-Daten vom Formular
+        $controller->add();
         break;
     case 'showDeleteForm':
         $controller->showDeleteForm();
         break;
     case 'delete':
-        $controller->delete(); // Verarbeitet POST vom Löschen-Formular
+        $controller->delete();
         break;
     default:
-        // Einfache 404-Seite oder Weiterleitung zur Liste
-        http_response_code(404);
-        echo "Seite nicht gefunden (Ungültige Aktion: " . htmlspecialchars($action) . ")";
-        // Alternativ: $controller->list();
+        $controller->list();
         break;
 }

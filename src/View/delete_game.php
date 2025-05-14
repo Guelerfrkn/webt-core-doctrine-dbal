@@ -1,8 +1,4 @@
 <?php
-// src/View/delete_game.php
-/**
- * @var array $game Das zu löschende Spiel
- */
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -15,7 +11,7 @@
         .confirmation-box { border: 1px solid #dc3545; background-color: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border-radius: 5px;}
         .confirmation-box p { margin-top: 0; }
         .confirmation-box ul { list-style-type: none; padding-left: 0; margin-bottom: 0;}
-        .confirmation-box ul li strong { display: inline-block; width: 90px; /* Für bessere Ausrichtung */}
+        .confirmation-box ul li strong { display: inline-block; width: 90px;}
         button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
         button[type="submit"] { background-color: #dc3545; color: white; }
         button[type="button"] { background-color: #6c757d; color: white; margin-left: 10px;}

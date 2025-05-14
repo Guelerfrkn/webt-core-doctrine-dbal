@@ -1,11 +1,4 @@
 <?php
-// src/View/game_list.php
-/**
- * @var array $games Die Liste der Spiele
- * @var string $tournamentName Der Name des Turniers
- * @var string $currentDate Das aktuelle Datum
- */
-// Erfolgsmeldungen basierend auf URL-Parameter 'status'
 $status = $_GET['status'] ?? '';
 $successMessage = '';
 if ($status === 'added') {
@@ -23,19 +16,18 @@ if ($status === 'added') {
     <style>
         body { font-family: sans-serif; max-width: 1100px; margin: 20px auto; padding: 15px; border: 1px solid #ccc; }
         h1, h2 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: auto; /* oder fixed, je nach Bedarf */}
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: auto;}
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; word-wrap: break-word; }
         th { background-color: #f2f2f2; white-space: nowrap; }
         .actions a { margin-right: 5px; text-decoration: none; }
         .add-button { display: inline-block; padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
         .success-message { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 5px; text-align: center;}
-        /* Responsive Anpassungen */
-        @media (max-width: 800px) { /* Ggf. Breakpoint anpassen */
+        @media (max-width: 800px) {
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { border: 1px solid #ccc; margin-bottom: 10px; }
-            td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 45%; /* Mehr Platz für Label */ white-space: normal; text-align:right; min-height: 24px; }
-            td:before { position: absolute; top: 6px; left: 6px; width: 40%; /* Breite der Labels */ padding-right: 10px; white-space: nowrap; text-align:left; font-weight: bold; }
+            td { border: none; border-bottom: 1px solid #eee; position: relative; padding-left: 45%; white-space: normal; text-align:right; min-height: 24px; }
+            td:before { position: absolute; top: 6px; left: 6px; width: 40%; padding-right: 10px; white-space: nowrap; text-align:left; font-weight: bold; }
             td:nth-of-type(1):before { content: "Spieler 1:"; }
             td:nth-of-type(2):before { content: "Symbol P1:"; }
             td:nth-of-type(3):before { content: "Spieler 2:"; }
